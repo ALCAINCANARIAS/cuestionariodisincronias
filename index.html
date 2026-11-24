@@ -795,6 +795,7 @@
 
   <!-- Acciones -->
   <div class="acciones">
+    <button class="btn-action primary" id="btn-descargar" onclick="descargarPerfil()" style="display:none">⬇ Descargar perfil</button>
     <button class="btn-action" onclick="limpiarFormulario()">🗑 Limpiar formulario</button>
   </div>
 
@@ -1022,6 +1023,7 @@ function generarAnalisis() {
 
   document.getElementById('analisis-contenido').innerHTML = html;
   document.getElementById('panel-analisis').style.display = 'block';
+  document.getElementById('btn-descargar').style.display = 'inline-block';
   document.getElementById('panel-analisis').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -1039,6 +1041,120 @@ function limpiarFormulario() {
   document.getElementById('fecha').valueAsDate = new Date();
   document.querySelectorAll('textarea').forEach(t => t.value = '');
   document.getElementById('panel-analisis').style.display = 'none';
+}
+
+// ── Descarga ──
+function descargarPerfil() {
+  const curso = document.getElementById('curso').value || '—';
+  const fecha = document.getElementById('fecha').value
+    ? new Date(document.getElementById('fecha').value).toLocaleDateString('es-ES')
+    : new Date().toLocaleDateString('es-ES');
+
+  const cogSi = state.cog.filter(v => v === true).length;
+  const motSi = state.mot.filter(v => v === true).length;
+  const afeSi = state.afe.filter(v => v === true).length;
+  const total = cogSi + motSi + afeSi;
+  const pct = (n, max) => Math.round((n / max) * 100);
+
+  function nivel(n, max) {
+    const p = pct(n, max);
+    if (p >= 60) return { color: '#E53E3E', texto: 'Intensidad alta' };
+    if (p >= 30) return { color: '#D69E2E', texto: 'Intensidad moderada' };
+    return { color: '#2D6A4F', texto: 'Baja o sin evidencia' };
+  }
+
+  const nCog = nivel(cogSi, 8), nMot = nivel(motSi, 6), nAfe = nivel(afeSi, 10);
+
+  function listaItems(tipo) {
+    const eti = etiquetas[tipo];
+    return state[tipo]
+      .map((v, i) => ({ v, i }))
+      .filter(x => x.v === true)
+      .map(x => `<li>${preguntas[tipo][x.i]} <em style="color:#6B7280">— ${eti[x.i]}</em></li>`)
+      .join('') || '<li style="color:#9CA3AF">Ninguno</li>';
+  }
+
+  const obsCog = document.getElementById('obs-cog').value;
+  const obsMot = document.getElementById('obs-mot').value;
+  const obsAfe = document.getElementById('obs-afe').value;
+
+  const alertas = [];
+  if (state.cog[5] === true) alertas.push('Sospecha de doble excepcionalidad con TDAH o TEA (monotropismo atencional). Se recomienda evaluación diferencial.');
+  if (state.cog[6] === true) alertas.push('Sospecha de doble excepcionalidad con Dislexia (desajuste cognitivo-fonológico). Ver apartado 3.5 del IP.');
+  if (state.afe[9] === true) alertas.push('Perfil de Demanda con Evitación Ansiosa (PDA). Explorar enfoque de baja demanda.');
+
+  const doc = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Perfil Disincrónico — ${fecha}</title>
+<style>
+  body { font-family: Arial, sans-serif; font-size: 13px; color: #1A1724; max-width: 820px; margin: 0 auto; padding: 32px 24px; background:#fff; }
+  h1 { font-size: 20px; color: #5B4FCF; margin-bottom: 4px; }
+  .sub { font-size: 12px; color: #6B7280; margin-bottom: 24px; }
+  h2 { font-size: 15px; color: #374151; border-bottom: 2px solid #E5E7EB; padding-bottom: 4px; margin-top: 28px; }
+  .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 16px 0; }
+  .card { border-radius: 8px; padding: 12px; text-align: center; border: 1px solid #D1D5DB; }
+  .num { font-size: 28px; font-weight: 700; }
+  .label { font-size: 11px; color: #6B7280; margin-top: 2px; }
+  .barra-wrap { margin: 6px 0; }
+  .barra-label { display: flex; justify-content: space-between; font-size: 11px; color: #6B7280; margin-bottom: 2px; }
+  .barra-track { height: 7px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
+  .barra-fill { height: 100%; border-radius: 4px; }
+  .dim { padding: 10px 12px; border-radius: 6px; margin: 6px 0; border-left: 3px solid; font-size: 12.5px; }
+  .alerta { background: #FFFBEB; border: 1px solid #F6E05E; border-radius: 6px; padding: 8px 12px; margin: 5px 0; font-size: 12px; color: #744210; }
+  ul { margin: 6px 0 0 16px; padding: 0; }
+  li { margin-bottom: 4px; line-height: 1.5; }
+  .obs { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; padding: 10px 12px; font-size: 12px; color: #374151; margin-top: 6px; }
+  .pie { font-size: 10.5px; color: #9CA3AF; margin-top: 32px; padding-top: 12px; border-top: 1px solid #E5E7EB; }
+  @media print { body { padding: 16px; } }
+</style>
+</head>
+<body>
+<h1>Disincronías en Alumnado con Altas Capacidades</h1>
+<div class="sub">Perfil disincrónico · Curso: <strong>${curso}</strong> · Fecha: <strong>${fecha}</strong> · Total ítems: <strong>${total} / 24</strong></div>
+
+<h2>Resumen por dimensión</h2>
+<div class="grid">
+  <div class="card"><div class="num" style="color:#5B4FCF">${cogSi}</div><div class="label">Cognitiva (de 8 · ${pct(cogSi,8)}%)</div></div>
+  <div class="card"><div class="num" style="color:#1E7E6F">${motSi}</div><div class="label">Psicomotora/Ejecutiva (de 6 · ${pct(motSi,6)}%)</div></div>
+  <div class="card"><div class="num" style="color:#C4520A">${afeSi}</div><div class="label">Afectiva/Socioemocional (de 10 · ${pct(afeSi,10)}%)</div></div>
+</div>
+<div class="barra-wrap"><div class="barra-label"><span>🧠 Cognitiva</span><span>${pct(cogSi,8)}%</span></div><div class="barra-track"><div class="barra-fill" style="width:${pct(cogSi,8)}%;background:#5B4FCF"></div></div></div>
+<div class="barra-wrap"><div class="barra-label"><span>✋ Psicomotora/Ejecutiva</span><span>${pct(motSi,6)}%</span></div><div class="barra-track"><div class="barra-fill" style="width:${pct(motSi,6)}%;background:#1E7E6F"></div></div></div>
+<div class="barra-wrap"><div class="barra-label"><span>❤️ Afectiva/Socioemocional</span><span>${pct(afeSi,10)}%</span></div><div class="barra-track"><div class="barra-fill" style="width:${pct(afeSi,10)}%;background:#C4520A"></div></div></div>
+
+<h2>Perfil por dimensión</h2>
+<div class="dim" style="border-color:${nCog.color};background:${cogSi>=5?'#FFF5F5':cogSi>=3?'#FFFBEB':'#F0FFF4'}"><strong style="color:${nCog.color}">🧠 Cognitiva — ${nCog.texto}</strong> · ${cogSi}/8 indicadores (${pct(cogSi,8)}%)</div>
+<div class="dim" style="border-color:${nMot.color};background:${motSi>=4?'#FFF5F5':motSi>=2?'#FFFBEB':'#F0FFF4'}"><strong style="color:${nMot.color}">✋ Psicomotora/Ejecutiva — ${nMot.texto}</strong> · ${motSi}/6 indicadores (${pct(motSi,6)}%)</div>
+<div class="dim" style="border-color:${nAfe.color};background:${afeSi>=6?'#FFF5F5':afeSi>=3?'#FFFBEB':'#F0FFF4'}"><strong style="color:${nAfe.color}">❤️ Afectiva/Socioemocional — ${nAfe.texto}</strong> · ${afeSi}/10 indicadores (${pct(afeSi,10)}%)</div>
+
+${alertas.length ? `<h2>⚠ Alertas de Doble Excepcionalidad (2E)</h2>${alertas.map(a=>`<div class="alerta">${a}</div>`).join('')}` : ''}
+
+<h2>Indicadores presentes — Cognitiva</h2>
+<ul>${listaItems('cog')}</ul>
+${obsCog ? `<div class="obs"><strong>Observaciones:</strong> ${obsCog}</div>` : ''}
+
+<h2>Indicadores presentes — Psicomotora/Ejecutiva</h2>
+<ul>${listaItems('mot')}</ul>
+${obsMot ? `<div class="obs"><strong>Observaciones:</strong> ${obsMot}</div>` : ''}
+
+<h2>Indicadores presentes — Afectiva/Socioemocional</h2>
+<ul>${listaItems('afe')}</ul>
+${obsAfe ? `<div class="obs"><strong>Observaciones:</strong> ${obsAfe}</div>` : ''}
+
+<div class="pie">Este análisis es una herramienta de observación orientativa y no constituye un diagnóstico clínico. Los resultados deben integrarse en el informe psicopedagógico completo junto con otras fuentes de evaluación (WISC-V, entrevista familiar, observación sistemática).</div>
+</body></html>`;
+
+  const blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Perfil-Disincronico-${fecha.replace(/\//g,'-')}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // Fecha por defecto: hoy
