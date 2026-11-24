@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disincronías ALCAIN — Análisis de Perfil</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #F0EEF5;
+    --surface: #FFFFFF;
+    --surface2: #F7F6FA;
+    --border: #D8D4E8;
+    --accent-cog: #5B4FCF;
+    --accent-cog-light: #EAE8F8;
+    --accent-mot: #1E7E6F;
+    --accent-mot-light: #E1F3F0;
+    --accent-afe: #C4520A;
+    --accent-afe-light: #FDF0E7;
+    --text: #1A1724;
+    --text-2: #4A455C;
+    --text-3: #7A7492;
+    --yes: #2D6A4F;
+    --yes-bg: #D8F3DC;
+    --no: #495057;
+    --no-bg: #E9ECEF;
+    --radius: 10px;
+    --shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--accent-cog);
+    color: #fff;
+    padding: 28px 40px 22px;
+  }
+  header h1 {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -.3px;
+  }
+  header p {
+    font-size: 13px;
+    opacity: .8;
+    margin-top: 4px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .meta-field label {
+    font-size: 11px;
+    opacity: .7;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .meta-field input {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 6px;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    min-width: 160px;
+    outline: none;
+  }
+  .meta-field input::placeholder { opacity: .5; }
+  .meta-field input:focus { background: rgba(255,255,255,.22); }
+
+  /* ── Layout ── */
+  main { max-width: 960px; margin: 0 auto; padding: 32px 24px 60px; }
+
+  .instruccion {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent-cog);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .instruccion strong { color: var(--text); }
+
+  /* ── Section block ── */
+  .seccion {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .seccion-header {
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .seccion-header.cog  { background: var(--accent-cog-light); border-bottom: 2px solid var(--accent-cog); }
+  .seccion-header.mot  { background: var(--accent-mot-light); border-bottom: 2px solid var(--accent-mot); }
+  .seccion-header.afe  { background: var(--accent-afe-light); border-bottom: 2px solid var(--accent-afe); }
+
+  .sec-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .cog  .sec-icon { background: var(--accent-cog); }
+  .mot  .sec-icon { background: var(--accent-mot); }
+  .afe  .sec-icon { background: var(--accent-afe); }
+
+  .seccion-titulo {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .cog  .seccion-titulo { color: var(--accent-cog); }
+  .mot  .seccion-titulo { color: var(--accent-mot); }
+  .afe  .seccion-titulo { color: var(--accent-afe); }
+
+  .contador-badge {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+
+  /* ── Item row ── */
+  .item {
+    padding: 14px 22px 14px 22px;
+    border-bottom: 1px solid var(--surface2);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: var(--surface2); }
+
+  .item-pregunta {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .item-tag {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-3);
+  }
+  .item-alerta {
+    display: inline-block;
+    margin-top: 5px;
+    margin-left: 4px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: #FFF3CD;
+    border: 1px solid #FFCA28;
+    color: #7A5C00;
+  }
+
+  .toggle-group {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .toggle-btn {
+    cursor: pointer;
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-3);
+    transition: all .15s;
+  }
+  .toggle-btn:hover { border-color: #bbb; color: var(--text); }
+  .toggle-btn.selected-si {
+    background: var(--yes-bg);
+    border-color: var(--yes);
+    color: var(--yes);
+  }
+  .toggle-btn.selected-no {
+    background: var(--no-bg);
+    border-color: #adb5bd;
+    color: var(--no);
+  }
+
+  /* ── Observaciones ── */
+  .obs-area {
+    padding: 0 22px 14px;
+    border-bottom: 1px solid var(--surface2);
+  }
+  .obs-area label {
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .obs-area textarea {
+    width: 100%;
+    min-height: 52px;
+    resize: vertical;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface2);
+    outline: none;
+  }
+  .obs-area textarea:focus { border-color: #9E97CC; background: #fff; }
+
+  /* ── Análisis ── */
+  #btn-analisis {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--accent-cog);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 28px;
+    letter-spacing: .2px;
+    transition: background .15s;
+  }
+  #btn-analisis:hover { background: #4A3EBE; }
+
+  #panel-analisis {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .analisis-header {
+    background: var(--accent-cog);
+    color: #fff;
+    padding: 14px 22px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .analisis-body { padding: 22px; }
+
+  .resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .resumen-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .resumen-card.cog { background: var(--accent-cog-light); border: 1px solid var(--accent-cog); }
+  .resumen-card.mot { background: var(--accent-mot-light); border: 1px solid var(--accent-mot); }
+  .resumen-card.afe { background: var(--accent-afe-light); border: 1px solid var(--accent-afe); }
+  .resumen-card .num {
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'Crimson Pro', serif;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .resumen-card.cog .num { color: var(--accent-cog); }
+  .resumen-card.mot .num { color: var(--accent-mot); }
+  .resumen-card.afe .num { color: var(--accent-afe); }
+  .resumen-card .label-card { font-size: 11.5px; color: var(--text-2); }
+  .resumen-card .total-card { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+  .barra-wrap { margin-bottom: 8px; }
+  .barra-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-2); margin-bottom: 3px; }
+  .barra-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .barra-fill { height: 100%; border-radius: 4px; transition: width .4s ease; }
+  .barra-fill.cog { background: var(--accent-cog); }
+  .barra-fill.mot { background: var(--accent-mot); }
+  .barra-fill.afe { background: var(--accent-afe); }
+
+  .perfil-bloque {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .perfil-titulo {
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .indicador-item {
+    padding: 10px 14px;
+    border-radius: 7px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+  }
+  .indicador-item.alta {
+    background: #FFF5F5;
+    border-color: #E53E3E;
+    color: #742A2A;
+  }
+  .indicador-item.media {
+    background: #FFFBEB;
+    border-color: #D69E2E;
+    color: #744210;
+  }
+  .indicador-item.baja {
+    background: #F0FFF4;
+    border-color: var(--yes);
+    color: #1C4532;
+  }
+  .indicador-item .flag { font-weight: 600; margin-right: 6px; }
+
+  .alertas-bloque {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .alerta-item {
+    background: #FFFBEB;
+    border: 1px solid #F6E05E;
+    border-radius: 7px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #744210;
+  }
+  .alerta-item strong { color: #5C3506; }
+
+  .items-marcados {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .items-marcados h3 { font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 10px; }
+  .marcado-row {
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    background: var(--surface2);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .marcado-row .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .dot.cog { background: var(--accent-cog); }
+  .dot.mot { background: var(--accent-mot); }
+  .dot.afe { background: var(--accent-afe); }
+
+  /* ── Acciones ── */
+  .acciones {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .btn-action {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+    transition: all .15s;
+  }
+  .btn-action:hover { background: var(--surface2); border-color: #bbb; }
+  .btn-action.primary {
+    background: var(--accent-cog);
+    color: #fff;
+    border-color: var(--accent-cog);
+  }
+  .btn-action.primary:hover { background: #4A3EBE; }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    header { background: #5B4FCF !important; -webkit-print-color-adjust: exact; }
+    .acciones, #btn-analisis, .toggle-btn, .obs-area textarea { display: none !important; }
+    #panel-analisis { display: block !important; }
+    .seccion { box-shadow: none; page-break-inside: avoid; }
+    main { padding: 16px; }
+    .resumen-grid { grid-template-columns: repeat(3,1fr); }
+    .item:hover { background: none; }
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 20px 16px; }
+    main { padding: 16px 12px 40px; }
+    .resumen-grid { grid-template-columns: 1fr; }
+    .header-meta { flex-direction: column; gap: 12px; }
+    .item { grid-template-columns: 1fr; }
+    .toggle-group { margin-top: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Disincronías en Alumnado con Altas Capacidades</h1>
+  <p>Formulario de análisis del perfil disincrónico</p>
+  <div class="header-meta">
+    <div class="meta-field">
+      <label>Curso / Nivel</label>
+      <input type="text" id="curso" placeholder="Ej. 4.º EP" autocomplete="off">
+    </div>
+    <div class="meta-field">
+      <label>Fecha</label>
+      <input type="date" id="fecha" autocomplete="off">
+    </div>
+
+  </div>
+</header>
+
+<main>
+
+  <div class="instruccion">
+    <strong>Instrucciones:</strong> Marca <em>Sí</em> o <em>No</em> en cada ítem según lo observado en el alumno/a. Una vez completado el formulario, pulsa <strong>"Generar análisis"</strong> para obtener el perfil disincrónico. Ningún dato se envía a ninguna plataforma. El formulario funciona completamente en local.
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SECCIÓN 1: DISINCRONÍA COGNITIVA
+  ═══════════════════════════════════════════ -->
+  <div class="seccion" id="sec-cog">
+    <div class="seccion-header cog">
+      <div class="sec-icon">🧠</div>
+      <div>
+        <div class="seccion-titulo">Disincronía Cognitiva</div>
+        <div style="font-size:12px;color:var(--text-2);margin-top:2px;">Desfases entre capacidad intelectual y procesamiento cognitivo-social</div>
+      </div>
+      <div class="contador-badge" id="cnt-cog">0 / 8 marcados</div>
+    </div>
+
+    <!-- ítem COG-1 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Se bloquea antes de empezar tareas por miedo al error o autoexigencia excesiva?
+        <span class="item-tag">Perfeccionismo bloqueante</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',0,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',0,'no')">No</button>
+      </div>
+    </div>
+    <!-- ítem COG-2 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Se colapsa o abandona el aula cuando se acumulan varias tareas o debe organizarse de forma autónoma?
+        <span class="item-tag">Dificultad de secuenciación autónoma</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',1,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',1,'no')">No</button>
+      </div>
+    </div>
+    <!-- ítem COG-3 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Se obsesiona con tener razón y desafía al docente de forma rígida en discusiones sobre ideas?
+        <span class="item-tag">Inflexibilidad cognitiva / oposicionismo</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',2,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',2,'no')">No</button>
+      </div>
+    </div>
+    <!-- ítem COG-4 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Interpreta de forma literal bromas, ironías o instrucciones indirectas, sintiéndose confundido u ofendido?
+        <span class="item-tag">Literalidad / procesamiento pragmático</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',3,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',3,'no')">No</button>
+      </div>
+    </div>
+    <!-- ítem COG-5 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Usa vocabulario muy técnico o adulto, pero no sabe adaptarlo a los niños de su edad?
+        <span class="item-tag">Desajuste pragmático-lingüístico</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',4,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',4,'no')">No</button>
+      </div>
+    </div>
+    <!-- ítem COG-6 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Concentración total en temas de interés + parálisis absoluta ante tareas rutinarias o mecánicas?
+        <span class="item-tag">Monotropismo atencional</span>
+        <span class="item-alerta">⚠ Alerta 2E (TDAH/TEA)</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',5,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',5,'no')">No</button>
+      </div>
+    </div>
+    <!-- ítem COG-7 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Comprensión lectora excelente, pero comete errores graves al leer en voz alta (cambia, salta o gira letras)?
+        <span class="item-tag">Desajuste cognitivo-fonológico</span>
+        <span class="item-alerta">⚠ Alerta 2E (Dislexia) · Ver 3.5 IP</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',6,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',6,'no')">No</button>
+      </div>
+    </div>
+    <!-- ítem COG-8 -->
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Necesita controlar y dirigir rígidamente las reglas de los juegos, enfadándose al ser asignado un rol pasivo?
+        <span class="item-tag">Necesidad de estructura mental en el entorno</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'cog',7,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'cog',7,'no')">No</button>
+      </div>
+    </div>
+    <div class="obs-area">
+      <label>Observaciones — Disincronía Cognitiva</label>
+      <textarea id="obs-cog" placeholder="Añade contexto, ejemplos concretos observados en el aula..."></textarea>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SECCIÓN 2: DISINCRONÍA PSICOMOTORA / EJECUTIVA
+  ═══════════════════════════════════════════ -->
+  <div class="seccion" id="sec-mot">
+    <div class="seccion-header mot">
+      <div class="sec-icon">✋</div>
+      <div>
+        <div class="seccion-titulo">Disincronía Psicomotora / Mecánica / Ejecutiva</div>
+        <div style="font-size:12px;color:var(--text-2);margin-top:2px;">Desfases entre capacidad cognitiva y ejecución motriz o funciones ejecutivas</div>
+      </div>
+      <div class="contador-badge" id="cnt-mot">0 / 6 marcados</div>
+    </div>
+
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Da explicaciones orales excelentes pero rechaza escribir, copiar de la pizarra o rellenar fichas?
+        <span class="item-tag">Rechazo grafo / asimetría mente-motricidad fina</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'mot',0,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'mot',0,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Letra muy desorganizada o llena de tachones debido a la velocidad del pensamiento?
+        <span class="item-tag">Disgrafía por velocidad</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'mot',1,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'mot',1,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Comprende ideas complejas de forma instantánea pero tarda muchísimo en completar ejercicios sencillos?
+        <span class="item-tag">Desfase perceptivo-mecánico / baja velocidad de procesamiento</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'mot',2,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'mot',2,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Maneja conocimientos complejos pero le faltan habilidades básicas cotidianas (higiene, atarse cordones, cubiertos)?
+        <span class="item-tag">Desajuste cognitivo-adaptativo / retraso madurativo práctico</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'mot',3,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'mot',3,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Dependencia total del adulto para organizar la mochila, la agenda o sus materiales escolares?
+        <span class="item-tag">Disincronía autonómica-intelectual (brecha CI vs. gestión práctica)</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'mot',4,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'mot',4,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Necesita balancearse, moverse, levantarse o hacer ruidos continuamente para concentrarse?
+        <span class="item-tag">Dificultad de modulación sensorial / autoestimulación motriz</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'mot',5,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'mot',5,'no')">No</button>
+      </div>
+    </div>
+    <div class="obs-area">
+      <label>Observaciones — Disincronía Psicomotora/Ejecutiva</label>
+      <textarea id="obs-mot" placeholder="Añade contexto, ejemplos concretos observados en el aula..."></textarea>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SECCIÓN 3: DISINCRONÍA AFECTIVA / SOCIOEMOCIONAL
+  ═══════════════════════════════════════════ -->
+  <div class="seccion" id="sec-afe">
+    <div class="seccion-header afe">
+      <div class="sec-icon">❤️</div>
+      <div>
+        <div class="seccion-titulo">Disincronía Afectiva / Socioemocional / Sensorial</div>
+        <div style="font-size:12px;color:var(--text-2);margin-top:2px;">Desfases entre madurez intelectual y desarrollo emocional, social o sensorial</div>
+      </div>
+      <div class="contador-badge" id="cnt-afe">0 / 10 marcados</div>
+    </div>
+
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Rabietas, crisis o llanto inconsolable ante pequeños fallos en tareas o al perder un juego?
+        <span class="item-tag">Perfeccionismo + desregulación emocional</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',0,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',0,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Razona como un adulto ante dilemas profundos, pero reacciona con rabieta infantil ante frustraciones cotidianas?
+        <span class="item-tag">Desajuste perceptivo-afectivo / madurez intelectual vs. emocional</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',1,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',1,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Responde de forma muy impulsiva antes de que termine la pregunta, cometiendo errores por impaciencia?
+        <span class="item-tag">Falta de inhibición conductual / desfase análisis-respuesta</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',2,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',2,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Se bloquea completamente o se niega a trabajar con límites de tiempo estrictos (cronómetro, examen)?
+        <span class="item-tag">Bloqueo ansioso / pérdida de eficiencia bajo presión</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',3,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',3,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿En recreos se aísla, deambula solo o busca únicamente hablar con adultos o niños mayores?
+        <span class="item-tag">Falta de reciprocidad social / asimetría de intereses</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',4,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',4,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Abandona enfadado los juegos si sus compañeros no siguen reglas hipercomplejas que él ha inventado?
+        <span class="item-tag">Rigidez lúdica / dificultad de socialización asociativa</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',5,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',5,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Crisis explosivas o se tapa los oídos ante ruidos cotidianos del colegio (timbres, murmullos)?
+        <span class="item-tag">Hiperreactividad auditiva / hipersensibilidad sensorial</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',6,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',6,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Se critica con dureza extrema, rompe folios o borra obsesivamente si el resultado no es "perfecto"?
+        <span class="item-tag">Desajuste emocional-evaluativo / baja tolerancia a la frustración</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',7,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',7,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Expresa con frecuencia sentirse un "bicho raro" o que nadie le comprende?
+        <span class="item-tag">Desajuste identitario / impacto en autoestima</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',8,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',8,'no')">No</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="item-pregunta">
+        ¿Evita tareas nuevas con excusas elaboradas, somatizaciones (dolor de tripa/cabeza) o desafíos al docente?
+        <span class="item-tag">Evitación ansiosa / Perfil PDA</span>
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="marcar(this,'afe',9,'si')">Sí</button>
+        <button class="toggle-btn" onclick="marcar(this,'afe',9,'no')">No</button>
+      </div>
+    </div>
+    <div class="obs-area">
+      <label>Observaciones — Disincronía Afectiva/Socioemocional</label>
+      <textarea id="obs-afe" placeholder="Añade contexto, ejemplos concretos observados en el aula..."></textarea>
+    </div>
+  </div>
+
+  <!-- Botón análisis -->
+  <button id="btn-analisis" onclick="generarAnalisis()">📊 Generar análisis del perfil disincrónico</button>
+
+  <!-- Panel análisis -->
+  <div id="panel-analisis">
+    <div class="analisis-header">Perfil disincrónico — Resultados</div>
+    <div class="analisis-body" id="analisis-contenido"></div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="acciones">
+    <button class="btn-action" onclick="limpiarFormulario()">🗑 Limpiar formulario</button>
+  </div>
+
+</main>
+
+<script>
+// ── Estado ──
+const state = {
+  cog: new Array(8).fill(null),
+  mot: new Array(6).fill(null),
+  afe: new Array(10).fill(null)
+};
+
+const etiquetas = {
+  cog: [
+    'Perfeccionismo bloqueante',
+    'Dificultad de secuenciación autónoma',
+    'Inflexibilidad cognitiva / oposicionismo',
+    'Literalidad / procesamiento pragmático',
+    'Desajuste pragmático-lingüístico',
+    'Monotropismo atencional ⚠ Alerta 2E (TDAH/TEA)',
+    'Desajuste cognitivo-fonológico ⚠ Alerta 2E (Dislexia)',
+    'Necesidad de estructura mental en el entorno'
+  ],
+  mot: [
+    'Rechazo grafo / asimetría mente-motricidad fina',
+    'Disgrafía por velocidad',
+    'Desfase perceptivo-mecánico / baja velocidad de procesamiento',
+    'Desajuste cognitivo-adaptativo / retraso madurativo práctico',
+    'Disincronía autonómica-intelectual',
+    'Dificultad de modulación sensorial / autoestimulación motriz'
+  ],
+  afe: [
+    'Perfeccionismo + desregulación emocional',
+    'Desajuste perceptivo-afectivo (intelecto vs. emoción)',
+    'Falta de inhibición conductual',
+    'Bloqueo ansioso / pérdida eficiencia bajo presión',
+    'Falta de reciprocidad social',
+    'Rigidez lúdica',
+    'Hiperreactividad auditiva / hipersensibilidad sensorial',
+    'Desajuste emocional-evaluativo',
+    'Desajuste identitario',
+    'Evitación ansiosa / Perfil PDA'
+  ]
+};
+
+const preguntas = {
+  cog: [
+    '¿Se bloquea antes de empezar tareas por miedo al error?',
+    '¿Se colapsa o abandona el aula con varias tareas simultáneas?',
+    '¿Se obsesiona con tener razón y desafía al docente rígidamente?',
+    '¿Interpreta de forma literal bromas e instrucciones indirectas?',
+    '¿Usa vocabulario técnico/adulto sin adaptarlo a sus iguales?',
+    '¿Concentración total en intereses + parálisis ante rutina?',
+    '¿Comprensión lectora excelente + errores graves en lectura oral?',
+    '¿Controla y dirige rígidamente los juegos con sus compañeros?'
+  ],
+  mot: [
+    '¿Excelente expresión oral + rechazo a escribir o copiar?',
+    '¿Letra muy desorganizada o llena de tachones?',
+    '¿Entiende ideas complejas + tarda en ejercicios sencillos?',
+    '¿Conocimientos complejos + falta de habilidades básicas cotidianas?',
+    '¿Dependencia total del adulto para organizar materiales?',
+    '¿Necesita moverse continuamente para concentrarse?'
+  ],
+  afe: [
+    '¿Rabietas o llanto inconsolable ante pequeños fallos?',
+    '¿Razonamiento adulto + rabieta infantil ante frustraciones?',
+    '¿Responde de forma impulsiva antes de terminar la pregunta?',
+    '¿Bloqueo total con límites de tiempo estrictos?',
+    '¿Se aísla en recreos o busca adultos/niños mayores?',
+    '¿Abandona juegos si no se siguen sus reglas complejas?',
+    '¿Crisis o tapado de oídos ante ruidos cotidianos del colegio?',
+    '¿Se critica con dureza y rompe/borra sus trabajos?',
+    '¿Se siente "bicho raro" y expresa que nadie le comprende?',
+    '¿Evita tareas nuevas con excusas, somatizaciones o desafíos?'
+  ]
+};
+
+const alertas2E = { cog: [5, 6] };
+
+// ── Marcar ítem ──
+function marcar(btn, tipo, idx, valor) {
+  const grupo = btn.closest('.toggle-group');
+  grupo.querySelectorAll('.toggle-btn').forEach(b => {
+    b.classList.remove('selected-si', 'selected-no');
+  });
+  btn.classList.add(valor === 'si' ? 'selected-si' : 'selected-no');
+  state[tipo][idx] = (valor === 'si');
+  actualizarContador(tipo);
+}
+
+function actualizarContador(tipo) {
+  const total = state[tipo].length;
+  const marcados = state[tipo].filter(v => v === true).length;
+  document.getElementById('cnt-' + tipo).textContent = marcados + ' / ' + total + ' marcados';
+}
+
+// ── Análisis ──
+function generarAnalisis() {
+  const cogSi = state.cog.filter(v => v === true).length;
+  const motSi = state.mot.filter(v => v === true).length;
+  const afeSi = state.afe.filter(v => v === true).length;
+  const total = cogSi + motSi + afeSi;
+  const maxTotal = 24;
+
+  const pct = (n, max) => Math.round((n / max) * 100);
+
+  function nivelTexto(n, max) {
+    const p = pct(n, max);
+    if (p >= 60) return { nivel: 'alta', texto: 'Intensidad alta', emoji: '🔴' };
+    if (p >= 30) return { nivel: 'media', texto: 'Intensidad moderada', emoji: '🟡' };
+    return { nivel: 'baja', texto: 'Baja o sin evidencia', emoji: '🟢' };
+  }
+
+  const nCog = nivelTexto(cogSi, 8);
+  const nMot = nivelTexto(motSi, 6);
+  const nAfe = nivelTexto(afeSi, 10);
+
+  // Alertas doble excepcionalidad
+  const alerta2E = [];
+  if (state.cog[5] === true) alerta2E.push('⚠ <strong>Sospecha de doble excepcionalidad con TDAH o TEA</strong> (ítem: monotropismo atencional). Se recomienda evaluación diferencial.');
+  if (state.cog[6] === true) alerta2E.push('⚠ <strong>Sospecha de doble excepcionalidad con Dislexia</strong> (ítem: desajuste cognitivo-fonológico). Se recomienda completar el apartado 3.5 del IP.');
+  if (state.afe[9] === true) alerta2E.push('⚠ <strong>Perfil de Demanda con Evitación Ansiosa (PDA)</strong> detectado. Evitar estrategias directivas rígidas; explorar enfoque de baja demanda.');
+
+  // Items marcados con SÍ
+  function itemsMarcados(tipo) {
+    return state[tipo]
+      .map((v, i) => ({ v, i }))
+      .filter(x => x.v === true)
+      .map(x => `<div class="marcado-row"><span class="dot ${tipo}"></span><span>${preguntas[tipo][x.i]} <em style="color:var(--text-3);font-size:11.5px;">— ${etiquetas[tipo][x.i]}</em></span></div>`)
+      .join('');
+  }
+
+  const curso = document.getElementById('curso').value || '—';
+  const fecha = document.getElementById('fecha').value ? new Date(document.getElementById('fecha').value).toLocaleDateString('es-ES') : new Date().toLocaleDateString('es-ES');
+
+  const obsCog = document.getElementById('obs-cog').value;
+  const obsMot = document.getElementById('obs-mot').value;
+  const obsAfe = document.getElementById('obs-afe').value;
+
+  let html = `
+    <p style="font-size:12.5px;color:var(--text-3);margin-bottom:18px;">
+      Curso: <strong style="color:var(--text)">${curso}</strong> &nbsp;·&nbsp; 
+      Fecha: <strong style="color:var(--text)">${fecha}</strong> &nbsp;·&nbsp; 
+      Total ítems marcados: <strong style="color:var(--text)">${total} / ${maxTotal}</strong>
+    </p>
+
+    <div class="resumen-grid">
+      <div class="resumen-card cog">
+        <div class="num">${cogSi}</div>
+        <div class="label-card">Cognitiva</div>
+        <div class="total-card">de 8 indicadores · ${pct(cogSi,8)}%</div>
+      </div>
+      <div class="resumen-card mot">
+        <div class="num">${motSi}</div>
+        <div class="label-card">Psicomotora/Ejecutiva</div>
+        <div class="total-card">de 6 indicadores · ${pct(motSi,6)}%</div>
+      </div>
+      <div class="resumen-card afe">
+        <div class="num">${afeSi}</div>
+        <div class="label-card">Afectiva/Socioemocional</div>
+        <div class="total-card">de 10 indicadores · ${pct(afeSi,10)}%</div>
+      </div>
+    </div>
+
+    <div class="barra-wrap">
+      <div class="barra-label"><span>🧠 Cognitiva</span><span>${pct(cogSi,8)}%</span></div>
+      <div class="barra-track"><div class="barra-fill cog" style="width:${pct(cogSi,8)}%"></div></div>
+    </div>
+    <div class="barra-wrap">
+      <div class="barra-label"><span>✋ Psicomotora/Ejecutiva</span><span>${pct(motSi,6)}%</span></div>
+      <div class="barra-track"><div class="barra-fill mot" style="width:${pct(motSi,6)}%"></div></div>
+    </div>
+    <div class="barra-wrap">
+      <div class="barra-label"><span>❤️ Afectiva/Socioemocional</span><span>${pct(afeSi,10)}%</span></div>
+      <div class="barra-track"><div class="barra-fill afe" style="width:${pct(afeSi,10)}%"></div></div>
+    </div>
+
+    <div class="perfil-bloque">
+      <div class="perfil-titulo">Perfil por dimensión</div>
+      <div class="indicador-item ${nCog.nivel}">
+        <span class="flag">${nCog.emoji} Cognitiva:</span> ${nCog.texto} — ${cogSi} de 8 indicadores presentes (${pct(cogSi,8)}%).
+        ${cogSi >= 5 ? 'El perfil cognitivo es marcado. Se aprecian múltiples señales de rigidez, inflexibilidad y procesamiento atípico.' : cogSi >= 3 ? 'Presencia moderada. Valorar si los ítems marcados tienen impacto en el funcionamiento escolar.' : 'Sin evidencia significativa de disincronía cognitiva en la observación actual.'}
+      </div>
+      <div class="indicador-item ${nMot.nivel}">
+        <span class="flag">${nMot.emoji} Psicomotora/Ejecutiva:</span> ${nMot.texto} — ${motSi} de 6 indicadores presentes (${pct(motSi,6)}%).
+        ${motSi >= 4 ? 'El desfase entre capacidad intelectual y ejecución motriz/ejecutiva es notable. Valorar medidas de accesibilidad y apoyo en escritura.' : motSi >= 2 ? 'Presencia moderada. Considerar adaptaciones metodológicas en producción escrita o autonomía organizativa.' : 'Sin evidencia significativa de disincronía psicomotora/ejecutiva en la observación actual.'}
+      </div>
+      <div class="indicador-item ${nAfe.nivel}">
+        <span class="flag">${nAfe.emoji} Afectiva/Socioemocional:</span> ${nAfe.texto} — ${afeSi} de 10 indicadores presentes (${pct(afeSi,10)}%).
+        ${afeSi >= 6 ? 'Perfil socioemocional muy marcado. Se recomienda revisión de la competencia socioafectiva (apartado 3.3) y coordinación con familia.' : afeSi >= 3 ? 'Presencia moderada. Monitorizar el bienestar emocional y la integración social.' : 'Sin evidencia significativa de disincronía afectiva/socioemocional en la observación actual.'}
+      </div>
+    </div>`;
+
+  if (alerta2E.length > 0) {
+    html += `<div class="alertas-bloque">
+      <div class="perfil-titulo" style="color:#92400E">⚠ Alertas de Doble Excepcionalidad (2E)</div>
+      ${alerta2E.map(a => `<div class="alerta-item">${a}</div>`).join('')}
+    </div>`;
+  }
+
+  // Items marcados
+  const todosMarcados = itemsMarcados('cog') + itemsMarcados('mot') + itemsMarcados('afe');
+  if (todosMarcados) {
+    html += `<div class="items-marcados">
+      <h3>Indicadores presentes (respuesta Sí)</h3>
+      ${todosMarcados}
+    </div>`;
+  }
+
+  // Observaciones
+  if (obsCog || obsMot || obsAfe) {
+    html += `<div class="items-marcados">
+      <h3>Observaciones registradas</h3>
+      ${obsCog ? `<div class="marcado-row"><span class="dot cog"></span><span><strong>Cognitiva:</strong> ${obsCog}</span></div>` : ''}
+      ${obsMot ? `<div class="marcado-row"><span class="dot mot"></span><span><strong>Psicomotora/Ejecutiva:</strong> ${obsMot}</span></div>` : ''}
+      ${obsAfe ? `<div class="marcado-row"><span class="dot afe"></span><span><strong>Afectiva/Socioemocional:</strong> ${obsAfe}</span></div>` : ''}
+    </div>`;
+  }
+
+  html += `<p style="font-size:11px;color:var(--text-3);margin-top:20px;padding-top:14px;border-top:1px solid var(--border);">
+    Este análisis es una herramienta de observación orientativa y no constituye un diagnóstico clínico. Los resultados deben integrarse en el informe psicopedagógico completo (IP) junto con otras fuentes de evaluación (WISC-V, entrevista familiar, observación sistemática).
+  </p>`;
+
+  document.getElementById('analisis-contenido').innerHTML = html;
+  document.getElementById('panel-analisis').style.display = 'block';
+  document.getElementById('panel-analisis').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Limpiar ──
+function limpiarFormulario() {
+  if (!confirm('¿Limpiar todo el formulario? Se perderán los datos introducidos.')) return;
+  ['cog','mot','afe'].forEach(t => {
+    state[t].fill(null);
+    actualizarContador(t);
+  });
+  document.querySelectorAll('.toggle-btn').forEach(b => {
+    b.classList.remove('selected-si','selected-no');
+  });
+  document.querySelectorAll('input[type=text], input[type=date]').forEach(i => { if(i.id !== 'fecha') i.value = ''; });
+  document.getElementById('fecha').valueAsDate = new Date();
+  document.querySelectorAll('textarea').forEach(t => t.value = '');
+  document.getElementById('panel-analisis').style.display = 'none';
+}
+
+// Fecha por defecto: hoy
+document.getElementById('fecha').valueAsDate = new Date();
+</script>
+</body>
+</html>
